@@ -4,16 +4,15 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.sql.*;
-import com.toedter.calendar.JDateChooser;
 import java.util.*;
 
 public class Signup extends JFrame implements ActionListener{
     
     JLabel l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12,l13,l14,l15;
-    JTextField t1,t2,t3,t4,t5,t6,t7;
+    JTextField t1,t2,t3,t4,t5,t6,t7, dobField;
     JRadioButton r1,r2,r3,r4,r5;
     JButton b;
-    JDateChooser dateChooser;
+    
     
     
     Random ran = new Random();
@@ -134,11 +133,11 @@ public class Signup extends JFrame implements ActionListener{
         groupstatus.add(r4);
         groupstatus.add(r5);
         
-        dateChooser = new JDateChooser();
-	//dateChooser.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-	dateChooser.setForeground(new Color(105, 105, 105));
-	dateChooser.setBounds(137, 337, 200, 29);
-	add(dateChooser);
+        dobField = new JTextField();
+        dobField.setFont(new Font("Raleway", Font.BOLD, 14));
+        dobField.setForeground(new Color(105, 105, 105));
+        dobField.setBounds(137, 337, 200, 29);
+        add(dobField);
         
         setLayout(null);
         l1.setBounds(140,20,600,40);
@@ -162,7 +161,7 @@ public class Signup extends JFrame implements ActionListener{
         l5.setBounds(100,240,200,30);
         add(l5);
         
-        dateChooser.setBounds(300, 240, 400, 30);
+        dobField.setBounds(300, 240, 400, 30);
         
         l6.setBounds(100,290,200,30);
         add(l6);
@@ -234,7 +233,7 @@ public class Signup extends JFrame implements ActionListener{
         String formno = first;
         String name = t1.getText();
         String fname = t2.getText();
-        String dob = ((JTextField) dateChooser.getDateEditor().getUiComponent()).getText();
+        String dob = dobField.getText();
         String gender = null;
         if(r1.isSelected()){ 
             gender = "Male";

@@ -4,7 +4,7 @@ package ASimulatorSystem;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.*;
+import java.sql.*;
 
 public class Deposit extends JFrame implements ActionListener{
     
@@ -57,13 +57,20 @@ public class Deposit extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent ae){
         try{        
             String amount = t1.getText();
-            Date date = new Date();
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             if(ae.getSource()==b1){
                 if(t1.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Please enter the Amount to you want to Deposit");
                 }else{
-                    Conn c1 = new Conn();
-                    c1.s.executeUpdate("insert into bank values('"+pin+"', '"+date+"', 'Deposit', '"+amount+"')");
+                        Conn c1 = new Conn();
+                        PreparedStatement ps = c1.c.prepareStatement(
+                            "insert into bank (pin, trans_date, type, amount) values(?, ?, ?, ?)"
+                        );
+                        ps.setString(1, pin);
+                        ps.setTimestamp(2, timestamp);
+                        ps.setString(3, "Deposit");
+                        ps.setString(4, amount);
+                        ps.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Rs. "+amount+" Deposited Successfully");
                     setVisible(false);
                     new Transactions(pin).setVisible(true);

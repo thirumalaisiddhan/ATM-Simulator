@@ -4,7 +4,6 @@ package ASimulatorSystem;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.Date;
 import java.sql.*;
 
 public class Withdrawl extends JFrame implements ActionListener{
@@ -66,7 +65,7 @@ public class Withdrawl extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent ae){
         try{        
             String amount = t1.getText();
-            Date date = new Date();
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             if(ae.getSource()==b1){
                 if(t1.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Please enter the Amount to you want to Withdraw");
@@ -76,7 +75,7 @@ public class Withdrawl extends JFrame implements ActionListener{
                     ResultSet rs = c1.s.executeQuery("select * from bank where pin = '"+pin+"'");
                     int balance = 0;
                     while(rs.next()){
-                       if(rs.getString("mode").equals("Deposit")){
+                       if(rs.getString("type").equals("Deposit")){
                            balance += Integer.parseInt(rs.getString("amount"));
                        }else{
                            balance -= Integer.parseInt(rs.getString("amount"));
@@ -86,8 +85,14 @@ public class Withdrawl extends JFrame implements ActionListener{
                         JOptionPane.showMessageDialog(null, "Insuffient Balance");
                         return;
                     }
-                    
-                    c1.s.executeUpdate("insert into bank values('"+pin+"', '"+date+"', 'Withdrawl', '"+amount+"')");
+                    PreparedStatement ps = c1.c.prepareStatement(
+                        "insert into bank (pin, trans_date, type, amount) values(?, ?, ?, ?)"
+                    );
+                    ps.setString(1, pin);
+                    ps.setTimestamp(2, timestamp);
+                    ps.setString(3, "Withdrawl");
+                    ps.setString(4, amount);
+                    ps.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Rs. "+amount+" Debited Successfully");
                     
                     setVisible(false);

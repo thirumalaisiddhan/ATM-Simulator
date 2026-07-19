@@ -82,7 +82,7 @@ public class FastCash extends JFrame implements ActionListener {
             ResultSet rs = c.s.executeQuery("select * from bank where pin = '"+pin+"'");
             int balance = 0;
             while (rs.next()) {
-                if (rs.getString("mode").equals("Deposit")) {
+                if (rs.getString("type").equals("Deposit")) {
                     balance += Integer.parseInt(rs.getString("amount"));
                 } else {
                     balance -= Integer.parseInt(rs.getString("amount"));
@@ -97,8 +97,15 @@ public class FastCash extends JFrame implements ActionListener {
                 this.setVisible(false);
                 new Transactions(pin).setVisible(true);
             }else{
-                Date date = new Date();
-                c.s.executeUpdate("insert into bank values('"+pin+"', '"+date+"', 'Withdrawl', '"+amount+"')");
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                PreparedStatement ps = c.c.prepareStatement(
+                    "insert into bank (pin, trans_date, type, amount) values(?, ?, ?, ?)"
+                );
+                ps.setString(1, pin);
+                ps.setTimestamp(2, timestamp);
+                ps.setString(3, "Withdrawl");
+                ps.setString(4, amount);
+                ps.executeUpdate();
                 JOptionPane.showMessageDialog(null, "Rs. "+amount+" Debited Successfully");
                     
                 setVisible(false);
